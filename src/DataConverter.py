@@ -76,61 +76,30 @@ class DataConverter:
         }
 
         for data in pdf_data:
-            df_data_model['company'] = df_data_model['company'] + self.get_company_names(data['content'])
-            # df_data_model['address'] = # df_data_model['address'] + self.get_company_addresses(data['content'])
-            df_data_model['purchase_date'] = df_data_model['purchase_date'] + self.get_company_purchase_date(data['content'])
-            df_data_model['total_value'] = df_data_model['total_value'] + self.get_company_total_value(data['content'])
+            company_matches = self.get_pattern_matches(r'Endereço:\s*(.*)', data['content'])
+            # address_matches = self.get_pattern_matches(r'Endereço:\s*(.*)', data['content'])
+            purchase_date_matches = self.get_pattern_matches(r'Data da compra:\s*(.*)', data['content'])
+            total_value_matches = self.get_pattern_matches(r'Total:\s*(.*)', data['content'])
+
+            df_data_model['company'] = df_data_model['company'] + company_matches
+            # df_data_model['address'] = # df_data_model['address'] + address_matches
+            df_data_model['purchase_date'] = df_data_model['purchase_date'] + purchase_date_matches
+            df_data_model['total_value'] = df_data_model['total_value'] + total_value_matches
 
         return pd.DataFrame(df_data_model)
-
-    def get_company_names(self, content: List[str]) -> List[str]:
-        company_name_pattern = re.compile(r'Endereço:\s*(.*)')
-
-        company_names = []
-
-        for text in content:
-            match = company_name_pattern.search(text)
-            if match:
-                company_names.append(match.group(1).strip())
-
-        return company_names
     
-    # def get_company_addresses(self, content: List[str]) -> List[str]:
-    #     company_name_pattern = re.compile(r'Endereço:\s*(.*)')
+    def get_pattern_matches(self, regex: str, text: List[str]) -> List[str]:
+        pattern = re.compile(regex)
 
-    #     company_names = []
+        matches = []
 
-    #     for text in content:
-    #         match = company_name_pattern.search(text)
-    #         if match:
-    #             company_names.append(match.group(1).strip())
-
-    #     return company_names
-
-    def get_company_purchase_date(self, content: List[str]) -> List[str]:
-        company_purchase_date_pattern = re.compile(r'Data da compra:\s*(.*)')
-
-        company_purchase_dates = []
-
-        for text in content:
-            match = company_purchase_date_pattern.search(text)
+        for sentence in text:
+            match = pattern.search(sentence)
             if match:
-                company_purchase_dates.append(match.group(1).strip())
+                matches.append(match.group(1).strip())
 
-        return company_purchase_dates
-    
-    def get_company_total_value(self, content: List[str]) -> List[str]:
-        company_total_value_pattern = re.compile(r'Total:\s*(.*)')
+        return matches
 
-        company_total_values = []
-
-        for text in content:
-            match = company_total_value_pattern.search(text)
-            if match:
-                company_total_values.append(match.group(1).strip())
-
-        return company_total_values
-    
     def save_to_excel(self, dataframe: pd.DataFrame):
         file_name = 'company-info-report.xlsx'
         dataframe.to_excel(os.path.join(self.output_path, file_name), index=False)
