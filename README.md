@@ -4,7 +4,7 @@
 
 Projeto criado para o projeto de extensão da matéria de Big Data aplicada na faculdade Estácio de Sá.
 
-Neste projeto, criamos um conversor de dados que pega vários arquivos em PDF dentro de uma pasta específica (padrão: input), lê o documento de acordo com o padrão dele e retorna os dados coletados em um Excel em uma outra pasta (padrão: output).
+Neste projeto, criamos um conversor de dados utilizando Apache Spark que pega vários arquivos em PDF dentro de uma pasta específica (padrão: input), lê o documento de acordo com o padrão dele e retorna os dados coletados em um Excel em uma outra pasta (padrão: output).
 
 Com este resultado final, nós podemos utilizar o Power BI para gerar informações que sejam úteis para a parte interessada, dando vários insights sobre o aglomerado de dados informado inicialmente.
 
