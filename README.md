@@ -27,14 +27,16 @@ pip install -r requirements.txt
 
 Adicione as pastas **output, input e tmp** na raiz do projeto. Assim o projeto conseguirá transferir os arquivos corretamente. A estrutura principal ficará assim:
 
-|-- input
-|-- output
-|-- src
-|-- tmp
-|-- venv
-|-- .gitignore
-|-- README.md
-|-- requirements.txt
+```powershell
+├── input
+├── output
+├── src
+├── tmp
+├── venv
+├── .gitignore
+├── README.md
+└── requirements.txt
+```
 
 **Obs: Insira os arquivos PDF que deseja extrair os dados dentro da pasta input.**
 
