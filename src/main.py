@@ -18,7 +18,6 @@ if __name__ == '__main__':
     spark_instance.sparkContext.setLogLevel("INFO")
     log4jLogger = spark_instance.sparkContext._jvm.org.apache.log4j
     LOGGER: Logger = log4jLogger.LogManager.getLogger(__name__)
-    # LOGGER.setLevel(log4jLogger.Level.INFO)
 
     LOGGER.warn('Initiliazing DataConverter script')
     
