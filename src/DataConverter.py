@@ -1,5 +1,5 @@
 import os
-import re
+import regex as re
 import pandas as pd
 import pymupdf
 from typing import List, Dict
@@ -68,23 +68,63 @@ class DataConverter:
         return converted_pdfs
     
     def extract_pdf_data_to_df(self, pdf_data: List[Dict]):
-        df_data_model = {
-            'company': [],
-            # 'address': [],
-            'purchase_date': [],
-            'total_value': []
-        }
+        df_data_model = {}
 
         for data in pdf_data:
-            company_matches = self.get_pattern_matches(r'Endereço:\s*(.*)', data['content'])
-            # address_matches = self.get_pattern_matches(r'Endereço:\s*(.*)', data['content'])
-            purchase_date_matches = self.get_pattern_matches(r'Data da compra:\s*(.*)', data['content'])
-            total_value_matches = self.get_pattern_matches(r'Total:\s*(.*)', data['content'])
+            info = self.get_pattern_matches(r'(?<=\nPESO LIQUIDO)(\n.+){24}', data['content'])
 
-            df_data_model['company'] = df_data_model['company'] + company_matches
-            # df_data_model['address'] = # df_data_model['address'] + address_matches
-            df_data_model['purchase_date'] = df_data_model['purchase_date'] + purchase_date_matches
-            df_data_model['total_value'] = df_data_model['total_value'] + total_value_matches
+            if len(info) > 0:
+                [
+                    uf, 
+                    district, 
+                    city, 
+                    hour_entrance_exit, 
+                    emission_date,
+                    phone,
+                    entrance_exit_date,
+                    address,
+                    name,
+                    cep,
+                    document,
+                    icms_base_calculation,
+                    icms_value,
+                    products_total_value,
+                    shipment_value,
+                    insurance_value,
+                    note_total_value,
+                    discount,
+                    other_expenses,
+                    ipi_total_value,
+                    x,
+                    shipment_for_account_type,
+                    quantity,
+                    y
+                ] = info[0].split('\n')
+
+                df_data_model['uf'] = [uf] + df_data_model.get('uf', [])
+                df_data_model['district'] = [district] + df_data_model.get('district', [])
+                df_data_model['city'] = [city] + df_data_model.get('city', [])
+                df_data_model['hour_entrance_exit'] = [hour_entrance_exit] + df_data_model.get('hour_entrance_exit', [])
+                df_data_model['emission_date'] = [emission_date] + df_data_model.get('emission_date', [])
+                df_data_model['phone'] = [phone] + df_data_model.get('phone', [])
+                df_data_model['entrance_exit_date'] = [entrance_exit_date] + df_data_model.get('entrance_exit_date', [])
+                df_data_model['address'] = [address] + df_data_model.get('address', [])
+                df_data_model['name'] = [name] + df_data_model.get('name', [])
+                df_data_model['cep'] = [cep] + df_data_model.get('cep', [])
+                df_data_model['document'] = [document] + df_data_model.get('document', [])
+                df_data_model['icms_base_calculation'] = [icms_base_calculation] + df_data_model.get('icms_base_calculation', [])
+                df_data_model['icms_value'] = [icms_value] + df_data_model.get('icms_value', [])
+                df_data_model['products_total_value'] = [products_total_value] + df_data_model.get('products_total_value', [])
+                df_data_model['shipment_value'] = [shipment_value] + df_data_model.get('shipment_value', [])
+                df_data_model['insurance_value'] = [insurance_value] + df_data_model.get('insurance_value', [])
+                df_data_model['note_total_value'] = [note_total_value] + df_data_model.get('note_total_value', [])
+                df_data_model['discount'] = [discount] + df_data_model.get('discount', [])
+                df_data_model['other_expenses'] = [other_expenses] + df_data_model.get('other_expenses', [])
+                df_data_model['ipi_total_value'] = [ipi_total_value] + df_data_model.get('ipi_total_value', [])
+                df_data_model['x'] = [x] + df_data_model.get('x', [])
+                df_data_model['shipment_for_account_type'] = [shipment_for_account_type] + df_data_model.get('shipment_for_account_type', [])
+                df_data_model['quantity'] = [quantity] + df_data_model.get('quantity', [])
+                df_data_model['y'] = [y] + df_data_model.get('y', [])
 
         return pd.DataFrame(df_data_model)
     
@@ -96,7 +136,7 @@ class DataConverter:
         for sentence in text:
             match = pattern.search(sentence)
             if match:
-                matches.append(match.group(1).strip())
+                matches.append(match.group(0).strip())
 
         return matches
 
