@@ -5,6 +5,9 @@ from DataConverter import DataConverter
 from pyspark.sql import SparkSession
 from logging import Logger
 
+from seeds.clients import ClientSeeder
+from seeds.products import ProductSeeder
+
 from services.ClientService import ClientService
 from services.ProductService import ProductService
 
@@ -24,8 +27,11 @@ if __name__ == '__main__':
 
     LOGGER.warn('Initiliazing DataConverter script')
 
-    client_service = ClientService(LOGGER=LOGGER)
-    product_service = ProductService(LOGGER=LOGGER)
+    client_seeder = ClientSeeder()
+    product_seeder = ProductSeeder()
+
+    client_service = ClientService(LOGGER=LOGGER, client_seeder=client_seeder)
+    product_service = ProductService(LOGGER=LOGGER, product_seeder=product_seeder)
     
     DataConverter(
         LOGGER=LOGGER,

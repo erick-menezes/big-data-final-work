@@ -3,10 +3,12 @@ import pandas as pd
 import regex as re
 from typing import List, Dict
 from logging import Logger
+from seeds.clients import ClientSeeder
 
 class ClientService:
-    def __init__(self, LOGGER: Logger):
-        self.LOGGER= LOGGER
+    def __init__(self, LOGGER: Logger, client_seeder: ClientSeeder):
+        self.LOGGER = LOGGER
+        self.client_seeder = client_seeder
 
     def start_extraction(self, pdf_files: List[str]) -> pd.DataFrame:
         self.LOGGER.info('Getting PDF content.')
@@ -15,7 +17,10 @@ class ClientService:
         self.LOGGER.info('Converting and merging all data to a dataframe')
         df = self.extract_and_convert_to_df(pdf_data)
 
-        return df
+        self.LOGGER.info('Populating dataframe with extra data')
+        df_data = self.populate_dataframe(df)
+
+        return df_data
     
     def get_content(self, pdf_files: List[str]) -> Dict:
         converted_pdfs = []
@@ -108,3 +113,11 @@ class ClientService:
                 matches.append(match.group(0).strip())
 
         return matches
+    
+    def populate_dataframe(self, dataframe: pd.DataFrame) -> pd.DataFrame:
+        new_clients = [self.client_seeder.generate_client() for _ in range(25)]
+
+        return pd.concat(
+            [dataframe, pd.DataFrame(new_clients)], 
+            ignore_index=True
+        )
